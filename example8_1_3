@@ -1,0 +1,147 @@
+#include <iostream>
+using namespace std;
+#include <time.h>
+void init(int* a, int n) {
+	for (int i = 0; i < n; i++) {
+		a[i] = rand() % 21 - 10;
+	}
+}
+//вывод массива на консоль
+void print(int* a, int n) {
+	for (int i = 0; i < n; i++) {
+		cout << a[i] << " ";
+	}
+	cout << endl;
+}
+//вывод меню и ввод выбора пользователя
+int menu() {
+	int res;
+	cout << "1 - добавление одного элемента\n";
+	cout << "2 - добавление нескольких элементов\n";
+	cout << "3- удаление одного элемента\n";
+	cout << "4 - удаление нескольких элементов\n";
+	cout << "5 - выход из программы\n";
+	cout << "Ваш выбор: ";
+	do {
+		cin >> res;
+		if (res < 1 || res>5) {
+			cout << "Неверный выбор! Повторите ввод: ";
+		}
+	} while (res < 1 || res>5);
+	return res;
+}
+//ввод номера позиции
+int getPoz(int n) {
+	int poz;
+	cout << "Ведите номер позиции в массиве: ";
+	do {
+		cin >> poz;
+		if (poz<0 || poz>n) {
+			cout << "Неверный номер!\n";
+			cout << "Введите число от 0 до " << n << " : ";
+		}
+	} while (poz<0 || poz>n);
+	return poz;
+
+}
+//вставка одного элемента в массив
+void insert(int* &a, int &n, int poz, int elem) {
+	int* tmp = new int[n + 1];
+	//переписать все элементы до вставляемого
+	for (int i = 0; i < poz; i++) {
+		tmp[i] = a[i];
+	}
+	tmp[poz] = elem;
+	//переписать остальные элементы до конца
+	for (int i = poz; i < n; i++) {
+		tmp[i + 1] = a[i];
+	}
+	delete[] a;
+	a = tmp;
+	n++;
+}
+void udal(int* &mas, int &n, int poz) {
+	int* tmp = new int[n - 1];
+	//переписать до удаляемого элемента
+	for (int i = 0; i < poz; i++) {
+		tmp[i] = mas[i];
+	}
+	//переписать после удаляемого элемента
+	for (int i = poz + 1; i < n; i++) {
+		tmp[i - 1] = mas[i];
+	}
+	delete[] mas;
+	mas = tmp;
+	n--;
+}
+void insertOne(int* &mas, int &n) {
+	int elem;
+	int poz = getPoz(n);
+	cout << "Введите вставляемый элемент: ";
+	cin >> elem;
+	insert(mas, n, poz, elem);
+}
+void insertSeveral(int* &mas, int &n) {
+	int kol;
+	int elem;
+	int poz = getPoz(n);
+	cout << "Введите количество добавляемых элементов: ";
+	do {
+		cin >> kol;
+		if (kol < 0) {
+			cout << "Неверное количество!\n";
+			cout << "Введите неотрицательное число: ";
+		}
+	} while (kol < 0);
+	for (int i = 1; i <= kol; i++) {
+		cout << "Введите значение номер " << i << " : ";
+		cin >> elem;
+		insert(mas, n, poz, elem);
+		poz++;
+	}
+}
+void delOne(int* &mas, int &n) {
+	int poz = getPoz(n - 1);
+	udal(mas, n, poz);
+}
+void delSeveral(int* &mas, int &n) {
+	int kol;
+	int poz = getPoz(n - 1);
+	cout << "Введите количество удаляемых элементов: ";
+	do {
+		cin >> kol;
+		if (kol < 0 || kol>n - poz) {
+			cout << "Неверное количество!\n";
+			cout << "Введите число от 0 до " << n - poz << " : ";
+		}
+	} while (kol < 0 || kol>n - poz);
+	for (int i = 1; i <= kol; i++) {
+		udal(mas, n, poz);
+	}
+}
+void main() {
+	void(*funPtr[4])(int*&, int&) = { insertOne,insertSeveral,delOne,delSeveral };
+	setlocale(LC_ALL, "rus");
+	srand(time(0));
+	int n;
+	int* mas = NULL;
+	cout << "Введите размер массива: ";
+	cin >> n;
+	mas = new int[n];
+	init(mas, n);
+	cout << "Исходный массив:\n";
+	print(mas, n);
+	int vyb;
+	while (true) {
+		vyb = menu();
+		if (vyb == 5) break;
+		(*funPtr)(mas, n);
+		cout << "Преобразованный массив:\n";
+		print(mas, n);
+	}
+	cout << "Завершение работы\n";
+	delete[] mas;
+	system("pause");
+	exit(0);
+	
+}
