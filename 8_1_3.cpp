@@ -56,6 +56,22 @@ void insertOne(int* &arr, int &size) {
 	size++;
 }
 
+void delOne(int* &arr, int &size) {
+	int poz = getPoz(size);
+	int* tmp = new int[size -1];
+	//переписать все элементы до вставляемого
+	for (int i = 0; i < poz; i++) {
+		tmp[i] = arr[i];
+	}
+	//переписать остальные элементы до конца
+	for (int i = poz; i < size; i++) {
+		tmp[i-1] = arr[i];
+	}
+	delete[] arr;
+	arr = tmp;
+	size--;
+}
+
 int main() {
 	setlocale(LC_ALL, "rus");
 	srand(time(0));
@@ -67,6 +83,8 @@ int main() {
 	init(arr, size);
 	print(arr, size);
 	insertOne(arr, size);
+	print(arr, size);
+	delOne(arr, size);
 	print(arr, size);
 	system("pause");
 	return 0;
