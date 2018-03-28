@@ -41,19 +41,11 @@ void copyRow(int **&mas, int &row, int col, int strike) {
 	for (int j = 0; j < col; j++) {
 		ptr[strike - 1][j] = mas[strike-1][j];
 	}
-	for (int i = 0; i < row; i++) {
-		if (i < strike - 1) {
-			ptr[j] = mas[i];
-			j++;
+	for (int i = 0; i <strike-1; i++) 
+		ptr[i] = mas[i];
+	for(int i=strike-1;i<col;i++){
+		ptr[i + 1] = mas[i];
 		}
-		if (i == strike - 1) {
-			j++;
-		}
-		if (i >= strike - 1) {
-			ptr[j] = mas[i];
-			j++;
-		}
-	}
 	delete[]mas;
 	mas = ptr;
 	row += 1;
